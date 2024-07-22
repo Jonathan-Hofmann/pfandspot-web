@@ -16,10 +16,10 @@ export const PfandSpotDetails = ({ data }: { data: any }) => {
                     <p className="text-muted-foreground mt-2">Erstellt am {format(new Date(data.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
                     <Separator className="my-4" />
 
-                    {Object.keys(data.items).map((key) => {
+                    {Object.keys(data.items).map((key, i) => {
                         const item = data.items[key];
                         return (
-                            <div className="py-1">
+                            <div key={"bottles_"+i} className="py-1">
                                 {key === "25Cent" &&
                                     <div className="flex flex-row justify-between">
                                         <div>

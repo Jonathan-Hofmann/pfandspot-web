@@ -52,10 +52,10 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
 
                     <Separator className="my-4"/>
                     <p className="font-semibold mb-2">Annahme</p>
-                    {Object.keys(data.accepted_items).map((key) => {
+                    {Object.keys(data.accepted_items).map((key, i:number) => {
                         const item = data.accepted_items[key];
                         return (
-                            <div className="p-2 hover:bg-zinc-100 rounded-md my-1">
+                            <div key={"annahme_"+i} className="p-2 hover:bg-zinc-100 rounded-md my-1">
                                 {key === "25Cent" &&
                                     <div className="flex flex-row justify-between">
                                         <div>
@@ -108,7 +108,7 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                     <p className="font-semibold mb-2">Öffnungszeiten</p>
                     {data.open_times.map((day:any, i:number) => {
                         return (
-                            <div className={cn(["p-2 hover:bg-zinc-100 rounded-md my-1", i === new Date().getUTCDay() && "bg-zinc-100"])}>
+                            <div key={"open_"+i} className={cn(["p-2 hover:bg-zinc-100 rounded-md my-1", i === new Date().getUTCDay() && "bg-zinc-100"])}>
                                 <div className="flex flex-row justify-between">
                                     <div>
                                         <p className="text-sm">{days[i]}</p>

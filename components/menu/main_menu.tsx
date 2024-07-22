@@ -7,9 +7,12 @@ import {
     MenubarShortcut,
     MenubarTrigger,
 } from "@/components/ui/menubar"
+import { useAuth } from "@/contexts/auth"
+import { Button } from "../ui/button"
 
 
 export const Navigation = () => {
+    const auth = useAuth()
     return (
         <div className="fixed top-0 right-0 left-0 z-[500] p-4 ">
             <Menubar className="flex flex-row items-center justify-between">
@@ -43,19 +46,27 @@ export const Navigation = () => {
                         </MenubarContent>
                     </MenubarMenu>
                 </div>
-                <MenubarMenu>
-                    <MenubarTrigger>Account</MenubarTrigger>
-                    <MenubarContent>
-                        <MenubarItem>
-                            New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-                        </MenubarItem>
-                        <MenubarItem>New Window</MenubarItem>
-                        <MenubarSeparator />
-                        <MenubarItem>Share</MenubarItem>
-                        <MenubarSeparator />
-                        <MenubarItem>Print</MenubarItem>
-                    </MenubarContent>
-                </MenubarMenu>
+                <div>
+                    {auth.user ?
+                        <MenubarMenu>
+                            <MenubarTrigger>Account</MenubarTrigger>
+                            <MenubarContent>
+                                <MenubarItem>
+                                    New Tab <MenubarShortcut>⌘T</MenubarShortcut>
+                                </MenubarItem>
+                                <MenubarItem>New Window</MenubarItem>
+                                <MenubarSeparator />
+                                <MenubarItem>Share</MenubarItem>
+                                <MenubarSeparator />
+                                <MenubarItem>Print</MenubarItem>
+                            </MenubarContent>
+                        </MenubarMenu>
+                    :
+                        <div>
+                            <Button onClick={()=>{auth.toggleAuthUi(true)}} size="sm">Sign In</Button>
+                        </div>
+                    }
+                </div>
             </Menubar>
 
         </div>
