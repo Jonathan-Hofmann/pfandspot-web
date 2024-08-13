@@ -5,103 +5,97 @@ import { format } from "date-fns"
 
 export const PfandSpotDetails = ({ data }: { data: any }) => {
     return (
-        <>
-            <SheetHeader>
-                <SheetTitle>{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                    data.amount / 100,
-                )}</SheetTitle>
-            </SheetHeader>
-            <div className="flex flex-col justify-between h-[calc(100%_-_40px)]">
-                <div>
-                    <p className="text-muted-foreground mt-2">Erstellt am {format(new Date(data.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
-                    <Separator className="my-4" />
+        <div className="flex flex-col justify-between h-[calc(100%_-_40px)]">
+            <p className="text-2xl font-bold">PfandSpot</p>
+            <div className="mb-4">
+                <p className="text-muted-foreground text-sm">Erstellt am {format(new Date(data.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
+                <Separator className="my-4" />
 
-                    {Object.keys(data.items).map((key, i) => {
-                        const item = data.items[key];
-                        return (
-                            <div key={"bottles_"+i} className="py-1">
-                                {key === "25Cent" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Einweg</p>
-                                            <p className="text-muted-foreground text-sm">25 Cent pro Flasche</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                                                item.amount_money / 100,
-                                            )}</p>
-                                            <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 25 Cent</p>
-                                        </div>
+                {Object.keys(data.items).map((key, i) => {
+                    const item = data.items[key];
+                    return (
+                        <div key={"bottles_" + i} className="py-1">
+                            {key === "25Cent" &&
+                                <div className="flex flex-row justify-between">
+                                    <div>
+                                        <p>Einweg</p>
+                                        <p className="text-muted-foreground text-sm">25 Cent pro Flasche</p>
                                     </div>
-                                }
-                                {key === "15Cent" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Einweg</p>
-                                            <p className="text-muted-foreground text-sm">15 Cent pro Flasche</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                                                item.amount_money / 100,
-                                            )}</p>
-                                            <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 15 Cent</p>
-                                        </div>
+                                    <div>
+                                        <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                                            item.amount_money / 100,
+                                        )}</p>
+                                        <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 25 Cent</p>
                                     </div>
-                                }
-                                {key === "08Cent" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Einweg</p>
-                                            <p className="text-muted-foreground text-sm">8 Cent pro Flasche</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                                                item.amount_money / 100,
-                                            )}</p>
-                                            <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 8 Cent</p>
-                                        </div>
+                                </div>
+                            }
+                            {key === "15Cent" &&
+                                <div className="flex flex-row justify-between">
+                                    <div>
+                                        <p>Einweg</p>
+                                        <p className="text-muted-foreground text-sm">15 Cent pro Flasche</p>
                                     </div>
-                                }
-                                {key === "crate" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Kasten</p>
-                                            <p className="text-muted-foreground text-sm">3,50 EURO pro Flasche</p>
-                                        </div>
-                                        <div>
-                                            <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                                                item.amount_money / 100,
-                                            )}</p>
-                                            <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 3,50 EURO</p>
-                                        </div>
+                                    <div>
+                                        <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                                            item.amount_money / 100,
+                                        )}</p>
+                                        <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 15 Cent</p>
                                     </div>
-                                }
-                            </div>
-                        )
-                    })}
-                    <Separator className="my-2" />
-                    <div className="flex flex-row justify-between">
-                        <div>
-                            <p className="font-semibold">Gesamt</p>
+                                </div>
+                            }
+                            {key === "08Cent" &&
+                                <div className="flex flex-row justify-between">
+                                    <div>
+                                        <p>Einweg</p>
+                                        <p className="text-muted-foreground text-sm">8 Cent pro Flasche</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                                            item.amount_money / 100,
+                                        )}</p>
+                                        <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 8 Cent</p>
+                                    </div>
+                                </div>
+                            }
+                            {key === "crate" &&
+                                <div className="flex flex-row justify-between">
+                                    <div>
+                                        <p>Kasten</p>
+                                        <p className="text-muted-foreground text-sm">3,50 EURO pro Flasche</p>
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                                            item.amount_money / 100,
+                                        )}</p>
+                                        <p className="text-muted-foreground text-xs text-right">{item.amount_bottles} x 3,50 EURO</p>
+                                    </div>
+                                </div>
+                            }
                         </div>
-                        <div>
-                            <p className="font-bold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
-                                data.amount / 100,
-                            )}</p>
-                        </div>
+                    )
+                })}
+                <Separator className="my-4" />
+                <div className="flex flex-row justify-between">
+                    <div>
+                        <p className="font-semibold">Gesamt</p>
+                    </div>
+                    <div>
+                        <p className="font-bold text-right">{new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(
+                            data.amount / 100,
+                        )}</p>
                     </div>
                 </div>
-
-                <div>
-                    <Button className="w-full">
-                        PfandSpot aufheben
-                    </Button>
-                    <Button variant={"link"} className="w-full mt-2">
-                        Problem melden
-                    </Button>
-                </div>
             </div>
-        </>
+
+            <div>
+                <Button className="w-full">
+                    PfandSpot aufheben
+                </Button>
+                <Button variant={"link"} className="w-full mt-2">
+                    Problem melden
+                </Button>
+            </div>
+        </div>
     )
 }
 

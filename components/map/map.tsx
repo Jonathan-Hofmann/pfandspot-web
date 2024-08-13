@@ -8,28 +8,33 @@ import { useEffect, useState } from "react";
 // import { FindMoreMerchantsOnMap } from "./findMoreMerchants";
 import { useLocalStorage } from "usehooks-ts";
 import { LatLngExpression } from "leaflet";
-import { PfandautomatOnMap } from "./pins/recycle_machine";
+import { PfandautomatOnMap } from "./pins/recyclespots";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "../ui/sheet";
 import { PfandSpotDetails } from "./views/pfandspot_details";
 import { DialogTitle } from "../ui/dialog";
 import { PfandautomatDetails } from "./views/pfandautomat_details";
+import { useNavigation } from "@/contexts/resultsAndNavigation";
+import { CreateRecycleSpotMapItem } from "./create/createRecycleSpot";
 
 const MapExplore = ({ onChange }: { onChange: Function }) => {
+    const leftNav = useNavigation();
 
     const [selectedPin, setSelection] = useState<any>();
     const [showDetails, toggleShowDetails] = useState(false);
     const [showMarker, setShowMarker] = useLocalStorage("filter_pins", "all")
+    const [mode, setMode] = useLocalStorage("pfandspot_map_mode", "normal")
 
     const [loc, setCenterLoc] = useState<LatLngExpression>([53.549614800521056, 9.987383427533725]);
 
     useEffect(() => {
         console.log(selectedPin)
-        if (selectedPin) {
-            console.log("Show sheet.")
-            toggleShowDetails(true)
-        } else {
-            toggleShowDetails(false)
-        }
+        // if (selectedPin) {
+        //     console.log("Show sheet.")
+        //     toggleShowDetails(true)
+        // } else {
+        //     toggleShowDetails(false)
+        // }
+        leftNav.selectSpot(selectedPin)
     }, [selectedPin])
 
     return (
@@ -56,8 +61,17 @@ const MapExplore = ({ onChange }: { onChange: Function }) => {
             />
             <LocationMarker />
 
-            {(showMarker === "all" || showMarker === "pfandspot") && <PfandSpotsOnMap onClick={setSelection} />}
-            {(showMarker === "all" || showMarker === "recycle_machines") && <PfandautomatOnMap onClick={setSelection} />}
+
+            {mode === "normal" ? 
+                <>
+                    {(showMarker === "all" || showMarker === "pfandspot") && <PfandSpotsOnMap onClick={setSelection} />}
+                    {(showMarker === "all" || showMarker === "recycle_machines") && <PfandautomatOnMap onClick={setSelection} />}
+                </>
+            :
+                <>
+                    {mode === "create_pfandautomat" && <CreateRecycleSpotMapItem/>}
+                </>
+            }
 
             <Sheet open={showDetails} onOpenChange={(open) => { toggleShowDetails(open); setSelection(undefined) }}>
                 <SheetContent>

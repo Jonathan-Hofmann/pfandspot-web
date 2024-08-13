@@ -1,27 +1,37 @@
+import { useState } from "react"
 import { DialogContent } from "../ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 import { LoginUi } from "./login"
 import { RegisterUi } from "./register"
+import { Button } from "../ui/button"
+import { useAuth } from "@/contexts/auth"
 
 export const AuthWrapper = () => {
-    return(
+    const [authMode, setAuthMode] = useState("signin")
+    const auth = useAuth();
+
+    return (
         <DialogContent>
-            <Tabs>
-                <TabsList>
-                    <TabsTrigger value="signin">
-                        Sign In
-                    </TabsTrigger>
-                    <TabsTrigger value="signup">
-                        Sign Up
-                    </TabsTrigger>
-                </TabsList>
-                <TabsContent value="signin">
-                    <LoginUi/>
-                </TabsContent>
-                <TabsContent value="signup">
-                    <RegisterUi/>
-                </TabsContent>
-            </Tabs>
+
+            <p className="text-2xl font-bold">PfandSpot</p>
+
+            {authMode === "signin" && <LoginUi />}
+            {authMode === "signup" && <RegisterUi />}
+
+            {!auth.isLoading &&
+                <>
+                    {authMode === "signin" && 
+                        <Button variant={"link"} onClick={()=>{setAuthMode("signup")}}>
+                            Noch keinen Account?
+                        </Button>
+                    }
+                    {authMode === "signup" && 
+                        <Button variant={"link"} onClick={()=>{setAuthMode("signin")}}>
+                            Hier anmelden
+                        </Button>
+                    }
+                </>
+            }
         </DialogContent>
     )
 }

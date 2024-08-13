@@ -3,136 +3,210 @@ import { Separator } from "@/components/ui/separator"
 import { SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { format } from "date-fns"
 import { FaCheckCircle, FaExclamationCircle, FaMinusCircle } from "react-icons/fa"
-import {BsCheckCircle, BsCheckCircleFill, BsXCircle, BsXCircleFill} from "react-icons/bs"
+import { BsCheckCircle, BsCheckCircleFill, BsXCircle, BsXCircleFill } from "react-icons/bs"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import { useMemo } from "react"
 
 export const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
-export const PfandautomatDetails = ({ data }: { data: any }) => {
-    return (
-        <>
-            <SheetHeader>
-                <SheetTitle>{data.name}</SheetTitle>
-            </SheetHeader>
-            <div className="flex flex-col justify-between h-[calc(100%_-_40px)]">
-                <div>
-                    <p className="text-muted-foreground mt-2">Erstellt am {format(new Date(data.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
-                    <Separator className="my-4" />
+export const getRecycleSpotStatus = (data:any) => {
+    let base = ({
+        id: 0,
+        title: "Keine Probleme",
+        message: ""
+    })
 
-                    {data.status === "open" &&
-                        <div className="p-3 flex flex-row items-start justify-start bg-green-500 text-white gap-3 rounded-lg">
+    if(data.status === "problem"){
+        base =  ({
+            id: 1,
+            title: "Problem",
+            message: "Smth"
+        })
+
+        // Do more stuff for messages etc...
+
+    }
+
+    let today = new Date().getUTCDay();
+    today-=1;
+    if(today === -1){
+        today = 6
+    }
+
+    const today_key = Object.keys(data.open_times)[today];
+    const openingTimes = data.open_times[today_key];
+
+    const now = new Date().getHours();
+    const from_hour = openingTimes.from
+    const to_hour = openingTimes.to
+    if(now < from_hour || now > to_hour){
+        base =  ({
+            id: 2,
+            title: "Geschlossen",
+            message: ""
+        })
+        
+        console.log("Closed...");
+    }
+    return(base)
+}
+
+export const PfandautomatDetails = ({ data }: { data: any }) => {
+
+    const status = useMemo(() => {
+        return (getRecycleSpotStatus(data))
+    }, [data])
+
+    return (
+        <div className="flex flex-col">
+            <p className="mb-2 text-xs text-muted-foreground">PFANDAUTOMAT</p>
+            <p className="text-2xl font-bold">{data.name}</p>
+            <div>
+                <p className="text-muted-foreground text-sm">Erstellt am {format(new Date(data.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
+
+                <div className="mt-4">
+                    {status.id === 0 &&
+                        <div className="p-2.5 flex flex-row items-start justify-start bg-green-500 text-white gap-3 rounded-md">
                             <FaCheckCircle className="h-4 w-4 mt-1" />
                             <div className="p-0">
-                                <p className="font-bold mt-0">Geöffnet</p>
-                                <p className="text-sm">Keine Probleme gemeldet</p>
+                                <p className="font-semibold mt-0">Keine Probleme</p>
                             </div>
                         </div>
                     }
-
-                    {data.status === "problem" &&
-                        <div className="p-3 flex flex-row items-start justify-start bg-orange-500 text-white gap-3 rounded-lg">
+                    {status.id === 1 &&
+                        <div className="p-2.5 flex flex-row items-start justify-start bg-orange-500 text-white gap-3 rounded-lg">
                             <FaExclamationCircle className="h-4 w-4 mt-1" />
                             <div className="p-0">
-                                <p className="font-bold mt-0">Problem</p>
+                                <p className="font-semibold mt-0">Problem</p>
                                 <p className="text-sm">Es liegt mind. ein Problem vor</p>
                             </div>
                         </div>
                     }
-
-                    {data.status === "closed" &&
-                        <div className="p-3 flex flex-row items-start justify-start bg-red-500 text-white gap-3 rounded-lg">
+                    {status.id === 2 &&
+                        <div className="p-2.5 flex flex-row items-start justify-start bg-zinc-500 text-white gap-3 rounded-lg">
                             <FaMinusCircle className="h-4 w-4 mt-1" />
                             <div className="p-0">
-                                <p className="font-bold mt-0">Geschlossen</p>
-                                <p className="text-sm">Oder ein Problem verhindert die Annahme.</p>
+                                <p className="font-semibold mt-0">Geschlossen</p>
                             </div>
                         </div>
                     }
+                </div>
 
-                    <Separator className="my-4"/>
-                    <p className="font-semibold mb-2">Annahme</p>
-                    {Object.keys(data.accepted_items).map((key, i:number) => {
-                        const item = data.accepted_items[key];
-                        return (
-                            <div key={"annahme_"+i} className="p-2 hover:bg-zinc-100 rounded-md my-1">
-                                {key === "25Cent" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Einweg</p>
-                                            <p className="text-muted-foreground text-sm">25 Cent pro Flasche</p>
-                                        </div>
-                                        <div>
-                                        {item.usable ? <BsCheckCircleFill className="h-5 w-5"/> : <BsXCircle className="h-5 w-5"/>}
-                                        </div>
-                                    </div>
-                                }
-                                {key === "15Cent" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Einweg</p>
-                                            <p className="text-muted-foreground text-sm">15 Cent pro Flasche</p>
-                                        </div>
-                                        <div>
-                                        {item.usable ? <BsCheckCircleFill className="h-5 w-5"/> : <BsXCircle className="h-5 w-5"/>}
-                                        </div>
-                                    </div>
-                                }
-                                {key === "08Cent" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Einweg</p>
-                                            <p className="text-muted-foreground text-sm">8 Cent pro Flasche</p>
-                                        </div>
-                                        <div>
-                                        {item.usable ? <BsCheckCircleFill className="h-5 w-5"/> : <BsXCircle className="h-5 w-5"/>}
-                                        </div>
-                                    </div>
-                                }
-                                {key === "crate" &&
-                                    <div className="flex flex-row justify-between">
-                                        <div>
-                                            <p>Kasten</p>
-                                            <p className="text-muted-foreground text-sm">3,50 EURO pro Flasche</p>
-                                        </div>
-                                        <div>
-                                        {item.usable ? <BsCheckCircleFill className="h-5 w-5"/> : <BsXCircle className="h-5 w-5"/>}
-                                        </div>
-                                    </div>
-                                }
+                <Separator className="my-4" />
+                <p className="font-semibold mb-2">Annahme</p>
+
+                <div className="flex flex-col gap-2">
+                    {data.accepted_items["25Cent"]?.usable ?
+                        <div className="flex flex-row justify-between">
+                            <div>
+                                <p>Einweg</p>
                             </div>
-                        )
-                    })}
+                            <div>
+                                <BsCheckCircleFill className="h-5 w-5" />
+                            </div>
+                        </div>
+                        :
+                        <div className="flex flex-row justify-between">
+                            <div>
+                                <p>Einweg</p>
+                            </div>
+                            <div>
+                                <BsXCircle className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                        </div>
+                    }
+                    {(data.accepted_items["16Cent"]?.usable && data.accepted_items["08Cent"]?.usable) ?
+                        <div className="flex flex-row justify-between">
+                            <div>
+                                <p>Mehrweg</p>
+                            </div>
+                            <div>
+                                <BsCheckCircleFill className="h-5 w-5" />
+                            </div>
+                        </div>
+                        :
+                        <div className="flex flex-row justify-between">
+                            <div>
+                                <p>Mehrweg</p>
+                            </div>
+                            <div>
+                                <BsXCircle className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                        </div>
+                    }
+                    {data.accepted_items["crate"]?.usable ?
+                        <div className="flex flex-row justify-between">
+                            <div>
+                                <p>Kasten</p>
+                            </div>
+                            <div>
+                                <BsCheckCircleFill className="h-5 w-5" />
+                            </div>
+                        </div>
+                        :
+                        <div className="flex flex-row justify-between">
+                            <div>
+                                <p>Kasten</p>
+                            </div>
+                            <div>
+                                <BsXCircle className="h-5 w-5 text-muted-foreground" />
+                            </div>
+                        </div>
+                    }
+                </div>
 
-                    <Separator className="my-4"/>
-                    <p className="font-semibold mb-2">Öffnungszeiten</p>
-                    {data.open_times.map((day:any, i:number) => {
+                <Separator className="my-4" />
+                <p className="font-semibold mb-2">Öffnungszeiten</p>
+                {data.open_times.map((day: any, i: number) => {
+                    let tmp_i = i + 1
+                    console.log(tmp_i)
+                    if (tmp_i < 6) {
                         return (
-                            <div key={"open_"+i} className={cn(["p-2 hover:bg-zinc-100 rounded-md my-1", i === new Date().getUTCDay() && "bg-zinc-100"])}>
-                                <div className="flex flex-row justify-between">
+                            <div key={"open_" + i} className={cn(["p-2 py-1 hover:bg-zinc-100 rounded-md my-1", tmp_i === new Date().getUTCDay() && "bg-zinc-200"])}>
+                                <div className="flex flex-row justify-between items-center">
                                     <div>
                                         <p className="text-sm">{days[i]}</p>
                                     </div>
                                     <div>
-                                        {day.from === "00:00" ? 
+                                        {day.from === "00:00" ?
                                             <Badge variant={"secondary"}>Geschlossen</Badge>
-                                        :
-                                            <p className="text-sm">{day.from} Uhr bis {day.to} Uhr</p>
+                                            :
+                                            <p className="text-xs">{day.from} Uhr bis {day.to} Uhr</p>
                                         }
                                     </div>
                                 </div>
                             </div>
                         )
-                    })}
-                </div>
-
-                <div>
-                    <Button variant={"secondary"} className="w-full">
-                        Problem melden
-                    </Button>
-                </div>
+                    } else {
+                        return (
+                            <div key={"open_" + 0} className={cn(["p-2 py-1 hover:bg-zinc-100 rounded-md my-1", new Date().getUTCDay() === 0 && "bg-zinc-200"])}>
+                                <div className="flex flex-row justify-between items-center">
+                                    <div>
+                                        <p className="text-sm">{days[6]}</p>
+                                    </div>
+                                    <div>
+                                        {(day.from === 0 && day.to === 0) ?
+                                            <Badge variant={"secondary"}>Geschlossen</Badge>
+                                            :
+                                            <p className="text-xs">{day.from} Uhr bis {day.to} Uhr</p>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    }
+                })}
             </div>
-        </>
+
+            <Separator className="my-4" />
+
+            <div>
+                <Button variant={"secondary"} className="w-full">
+                    Problem melden
+                </Button>
+            </div>
+        </div>
     )
 }
 
