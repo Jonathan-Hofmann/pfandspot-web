@@ -53,9 +53,9 @@ export const PfandautomatOnMap = ({ onClick }: { onClick: Function }) => {
     <>
       {data &&
         <>
-          {data.map((item) => {
+          {data.map((item, i) => {
             return(
-              <RecycleSpot item={item} onClick={onClick}/>
+              <RecycleSpot key={"spot_"+i} item={item} onClick={onClick}/>
             )
           })}
         </>

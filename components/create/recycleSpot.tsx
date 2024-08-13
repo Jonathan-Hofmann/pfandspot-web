@@ -103,10 +103,10 @@ export const CreateRecycleSpot = ({ coordinate, closeDialog }: { coordinate: Lat
 
                 <div className="mt-4">
                     <p>Öffnungszeiten</p>
-                    <p className="text-sm text-muted-foreground mb-2">Wenn geschlossen, dann auf "Von 0 bis 0" setzen</p>
+                    <p className="text-sm text-muted-foreground mb-2">Wenn geschlossen, dann auf <i>Von 0 bis 0</i> setzen</p>
                     {days.map((day, i) => {
                         return (
-                            <div className="my-2">
+                            <div key={"hours_"+day} className="my-2">
                                 <div className="flex flex-row items-center gap-2">
                                     <p className="flex flex-row items-center w-full">{day} von</p>
                                     <Input value={openingHours[i].from} onChange={(e) => {
