@@ -38,7 +38,7 @@ export const AppleMaps = () => {
                     longitudeDelta: 0.11
                 }}
                 isZoomEnabled
-                showsPointsOfInterest={false}
+                showsPointsOfInterest={false} 
                 allowWheelToZoom
                 onRegionChangeEnd={(coordinates)=>{
                     const NorthEast = {
