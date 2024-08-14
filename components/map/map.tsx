@@ -21,7 +21,10 @@ const MapExplore = ({ onChange }: { onChange: Function }) => {
 
     const [selectedPin, setSelection] = useState<any>();
     const [showDetails, toggleShowDetails] = useState(false);
-    const [showMarker, setShowMarker] = useLocalStorage("filter_pins", "all")
+    const [showMarker, setShowMarker] = useLocalStorage("filter_pins", {
+        recyclespots: true,
+        pfandspots: true
+    })
     const [mode, setMode] = useLocalStorage("pfandspot_map_mode", "normal")
 
     const [loc, setCenterLoc] = useState<LatLngExpression>([53.549614800521056, 9.987383427533725]);
@@ -64,8 +67,8 @@ const MapExplore = ({ onChange }: { onChange: Function }) => {
 
             {mode === "normal" ? 
                 <>
-                    {(showMarker === "all" || showMarker === "pfandspot") && <PfandSpotsOnMap onClick={setSelection} />}
-                    {(showMarker === "all" || showMarker === "recycle_machines") && <PfandautomatOnMap onClick={setSelection} />}
+                    {showMarker.pfandspots && <PfandSpotsOnMap onClick={setSelection} />}
+                    {showMarker.recyclespots && <PfandautomatOnMap onClick={setSelection} />}
                 </>
             :
                 <>

@@ -1,7 +1,12 @@
+"use client"
+import { AddressSearch } from "@/components/map/address/addressSearch";
 import { PfandautomatDetails } from "@/components/map/views/pfandautomat_details";
 import { PfandSpotDetails } from "@/components/map/views/pfandspot_details";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { createContext, useContext, useMemo, useState } from "react";
+import { BsEyeSlash } from "react-icons/bs";
+import { useLocalStorage } from "usehooks-ts";
 
 interface Navigation {
     setPfandSpotsInView: (val: any[]) => void,
@@ -21,6 +26,10 @@ export const ResultsAndNavigationProvider = ({ children }: { children: any }) =>
 
     const [currPfandSpots, setCurrPfandSpotsInView] = useState<any[]>([]);
     const [currRecycleSpots, setCurrRecycleSpotsInView] = useState<any[]>([]);
+    const [showMarker, setShowMarker] = useLocalStorage("filter_pins", {
+        recyclespots: true,
+        pfandspots: true
+    })
 
     const [selectedSpot, setSelectedSpot] = useState<undefined|any>(undefined)
 
@@ -34,17 +43,27 @@ export const ResultsAndNavigationProvider = ({ children }: { children: any }) =>
         <ResultsAndNavigationContext.Provider value={vals}>
             <div className="fixed left-0 top-0 w-[350px] p-4 flex flex-col gap-2 z-[501]">
                 <div className="bg-background shadow-lg border rounded-xl p-4 w-full">
-                    <p className="text-xl text-center font-semibold mb-2">PfandSpot (Open Source)</p>
-                    <Input placeholder="Suche nach Stadt, PLZ und mehr ..." className="bg-background" />
+                    <p className="text-xl text-center font-semibold mb-2">PfandSpot</p>
+                    <AddressSearch/>
                 </div>
                 <div className="bg-background shadow-lg border rounded-xl p-2 w-full grid grid-cols-2 gap-2">
-                    <div className="p-2 hover:bg-zinc-100 rounded-md">
+                    <div onClick={()=>{
+                        setShowMarker((old)=>(
+                            {...old, ...{"pfandspots": !old["pfandspots"]}}
+                        ))
+                    }} className={cn(["p-2 hover:bg-zinc-100 rounded-md relative",!showMarker.pfandspots ? "bg-zinc-100" : ""])}>
                         <p className="text-xl font-bold">{currPfandSpots.length}</p>
                         <p className="text-sm text-muted-foreground">PfandSpots</p>
+                        {!showMarker.pfandspots && <BsEyeSlash className=" absolute top-3 right-3"/>}
                     </div>
-                    <div className="p-2 hover:bg-zinc-100 rounded-md">
+                    <div onClick={()=>{
+                        setShowMarker((old)=>(
+                            {...old, ...{"recyclespots": !old["recyclespots"]}}
+                        ))
+                    }} className={cn(["p-2 hover:bg-zinc-100 rounded-md relative",!showMarker.recyclespots ? "bg-zinc-100" : ""])}>
                         <p className="text-xl font-bold">{currRecycleSpots.length}</p>
                         <p className="text-sm text-muted-foreground">Pfandautomaten</p>
+                        {!showMarker.recyclespots && <BsEyeSlash className=" absolute top-3 right-3"/>}
                     </div>
                 </div>
                 {selectedSpot &&

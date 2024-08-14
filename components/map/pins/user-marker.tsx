@@ -3,10 +3,12 @@ import L, { DivIcon } from "leaflet";
 import { useEffect, useState } from "react";
 import { Marker, useMap } from "react-leaflet";
 import { toast } from "sonner";
+import { useLocalStorage } from "usehooks-ts";
 
 export const LocationMarker = () => {
     const [position, setPosition] = useState(null);
     const [bbox, setBbox] = useState([]);
+    const [pos, setPos] = useLocalStorage("map_pos", {lat:53.5818361971279, lng:9.988713141490866})
 
     // const lang = useDictionary();
 
@@ -25,7 +27,10 @@ export const LocationMarker = () => {
         });
     }, [map]);
 
-    // return <></>
+    useEffect(()=>{
+      map.flyTo(pos, 14);
+    }, [pos])
+
     return position === null ? null : (
         <Marker position={position} icon={createUserPosition()}>
         </Marker>
