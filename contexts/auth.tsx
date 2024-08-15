@@ -60,6 +60,18 @@ export const AuthProvider = ({ children }: { children: any }) => {
         }
     }
 
+    const handleGetUserData = async (logged_in_user:any) => {
+        if(!user){
+            const {data, error} = await supabase.from("user_data").select("*").eq("id", logged_in_user.id);
+
+            if(error){
+                console.log(error)
+            } else {
+                setUser({...data[0], ...{email: logged_in_user.email}})
+            }
+        }
+    }
+
     const handleLogout = async () => {
         const { error } = await supabase.auth.signOut()
     }
@@ -80,11 +92,11 @@ export const AuthProvider = ({ children }: { children: any }) => {
             if (event === 'INITIAL_SESSION') {
                 // handle initial session
                 toggleAuthUi(false)
-                setUser(session?.user)
+                handleGetUserData(session?.user)
             } else if (event === 'SIGNED_IN') {
                 // handle sign in event
                 toggleAuthUi(false)
-                setUser(session?.user)
+                handleGetUserData(session?.user)
             } else if (event === 'SIGNED_OUT') {
                 // handle sign out event
                 setUser(undefined)
