@@ -23,7 +23,7 @@ export const LocationMarker = () => {
             // circle.addTo(map);
             // setBbox(e.bounds.toBBoxString().split(","));
         }).on("locationerror", ()=>{
-          toast.error("ERROR")
+          // toast.error("ERROR")
         });
     }, [map]);
 

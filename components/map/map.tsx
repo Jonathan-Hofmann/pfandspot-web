@@ -14,7 +14,7 @@ import { PfandSpotDetails } from "./views/pfandspot_details";
 import { DialogTitle } from "../ui/dialog";
 import { PfandautomatDetails } from "./views/pfandautomat_details";
 import { useNavigation } from "@/contexts/resultsAndNavigation";
-import { CreateRecycleSpotMapItem } from "./create/createRecycleSpot";
+import { CreateRecycleSpotMapItem } from "./dialogContents/createRecycleSpot";
 
 const MapExplore = ({ onChange }: { onChange: Function }) => {
     const leftNav = useNavigation();
@@ -54,13 +54,14 @@ const MapExplore = ({ onChange }: { onChange: Function }) => {
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 // attribution='&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 // url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                url="https://api.maptiler.com/maps/basic-v2-light/{z}/{x}/{y}.png?key=MSlAVBomEZujzU8Ua2kF"
             />
             <TileLayer className="hidden dark:block"
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                 // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
                 // url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                // url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                url="https://api.maptiler.com/maps/dataviz-dark/{z}/{x}/{y}.png?key=MSlAVBomEZujzU8Ua2kF"
             />
             <LocationMarker />
 

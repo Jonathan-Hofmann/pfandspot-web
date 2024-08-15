@@ -6,19 +6,20 @@ import { FaCheckCircle, FaExclamationCircle, FaMinusCircle } from "react-icons/f
 import { BsCheckCircle, BsCheckCircleFill, BsXCircle, BsXCircleFill } from "react-icons/bs"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
+import { VerifyRecycleMachines } from "./src/verifyRecycleMachine"
 
 export const days = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"]
 
-export const getRecycleSpotStatus = (data:any) => {
+export const getRecycleSpotStatus = (data: any) => {
     let base = ({
         id: 0,
         title: "Keine Probleme",
         message: ""
     })
 
-    if(data.status === "problem"){
-        base =  ({
+    if (data.status === "problem") {
+        base = ({
             id: 1,
             title: "Problem",
             message: "Smth"
@@ -29,8 +30,8 @@ export const getRecycleSpotStatus = (data:any) => {
     }
 
     let today = new Date().getUTCDay();
-    today-=1;
-    if(today === -1){
+    today -= 1;
+    if (today === -1) {
         today = 6
     }
 
@@ -40,43 +41,50 @@ export const getRecycleSpotStatus = (data:any) => {
     const now = new Date().getHours();
     const from_hour = openingTimes.from
     const to_hour = openingTimes.to
-    if(now < from_hour || now > to_hour){
-        base =  ({
+    if (now < from_hour || now > to_hour) {
+        base = ({
             id: 2,
             title: "Geschlossen",
             message: ""
         })
-        
+
         console.log("Closed...");
     }
-    return(base)
+    return (base)
 }
 
 export const PfandautomatDetails = ({ data }: { data: any }) => {
 
+    const [spot, setSpot] = useState(data)
+
     const status = useMemo(() => {
         return (getRecycleSpotStatus(data))
+    }, [spot])
+
+    useEffect(()=>{
+        setSpot(data)
     }, [data])
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col relative">
             <p className="mb-2 text-xs text-muted-foreground">PFANDAUTOMAT</p>
-            <p className="text-2xl font-bold">{data.name}</p>
+            <p className="text-2xl font-bold">{spot.name}</p>
+
+            {spot.verified === false && <Badge variant={"secondary"} className="absolute right-0 top-0">Nicht verifiziert</Badge>}
+
             <div>
-                <p className="text-muted-foreground text-sm">Erstellt am {format(new Date(data.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
+                <p className="text-muted-foreground text-sm">Erstellt am {format(new Date(spot.created_at), "dd.MM.yyy, HH:mm:SS")} Uhr</p>
 
                 <div className="mt-4">
                     {status.id === 0 &&
-                        <div className="p-2.5 flex flex-row items-start justify-start bg-green-500 text-white gap-3 rounded-md">
-                            <FaCheckCircle className="h-4 w-4 mt-1" />
-                            <div className="p-0">
-                                <p className="font-semibold mt-0">Keine Probleme</p>
-                            </div>
+                        <div className="p-2.5 py-2 flex flex-row items-center justify-start bg-green-500 text-white gap-3 rounded-md">
+                            <FaCheckCircle className="h-4 w-4" />
+                            <p className="text-sm font-semibold">Keine Probleme</p>
                         </div>
                     }
                     {status.id === 1 &&
-                        <div className="p-2.5 flex flex-row items-start justify-start bg-orange-500 text-white gap-3 rounded-lg">
-                            <FaExclamationCircle className="h-4 w-4 mt-1" />
+                        <div className="p-2.5 flex flex-row items-center justify-start bg-orange-500 text-white gap-3 rounded-lg">
+                            <FaExclamationCircle className="h-4 w-4" />
                             <div className="p-0">
                                 <p className="font-semibold mt-0">Problem</p>
                                 <p className="text-sm">Es liegt mind. ein Problem vor</p>
@@ -84,8 +92,8 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                         </div>
                     }
                     {status.id === 2 &&
-                        <div className="p-2.5 flex flex-row items-start justify-start bg-zinc-500 text-white gap-3 rounded-lg">
-                            <FaMinusCircle className="h-4 w-4 mt-1" />
+                        <div className="p-2.5 flex flex-row items-center justify-start bg-zinc-500 text-white gap-3 rounded-lg">
+                            <FaMinusCircle className="h-4 w-4" />
                             <div className="p-0">
                                 <p className="font-semibold mt-0">Geschlossen</p>
                             </div>
@@ -97,7 +105,7 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                 <p className="font-semibold mb-2">Annahme</p>
 
                 <div className="flex flex-col gap-2">
-                    {data.accepted_items["25Cent"]?.usable ?
+                    {spot.accepted_items["25Cent"]?.usable ?
                         <div className="flex flex-row justify-between">
                             <div>
                                 <p>Einweg</p>
@@ -116,7 +124,7 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                             </div>
                         </div>
                     }
-                    {(data.accepted_items["16Cent"]?.usable && data.accepted_items["08Cent"]?.usable) ?
+                    {(spot.accepted_items["16Cent"]?.usable && spot.accepted_items["08Cent"]?.usable) ?
                         <div className="flex flex-row justify-between">
                             <div>
                                 <p>Mehrweg</p>
@@ -135,7 +143,7 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                             </div>
                         </div>
                     }
-                    {data.accepted_items["crate"]?.usable ?
+                    {spot.accepted_items["crate"]?.usable ?
                         <div className="flex flex-row justify-between">
                             <div>
                                 <p>Kasten</p>
@@ -158,12 +166,12 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
 
                 <Separator className="my-4" />
                 <p className="font-semibold mb-2">Öffnungszeiten</p>
-                {data.open_times.map((day: any, i: number) => {
+                {spot.open_times.map((day: any, i: number) => {
                     let tmp_i = i + 1
                     console.log(tmp_i)
                     if (tmp_i < 6) {
                         return (
-                            <div key={"open_" + i} className={cn(["p-2 py-1 hover:bg-zinc-100 rounded-md my-1", tmp_i === new Date().getUTCDay() && "bg-zinc-200"])}>
+                            <div key={"open_" + i} className={cn(["p-2 py-1 hover:bg-zinc-100 hover:dark:bg-zinc-900 rounded-md my-1", tmp_i === new Date().getUTCDay() && "bg-zinc-200 dark:bg-zinc-800"])}>
                                 <div className="flex flex-row justify-between items-center">
                                     <div>
                                         <p className="text-sm">{days[i]}</p>
@@ -180,7 +188,7 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                         )
                     } else {
                         return (
-                            <div key={"open_" + 0} className={cn(["p-2 py-1 hover:bg-zinc-100 rounded-md my-1", new Date().getUTCDay() === 0 && "bg-zinc-200"])}>
+                            <div key={"open_" + 0} className={cn(["p-2 py-1 hover:bg-zinc-100 hover:dark:bg-zinc-900 rounded-md my-1", new Date().getUTCDay() === 0 && "bg-zinc-200 dark:bg-zinc-800"])}>
                                 <div className="flex flex-row justify-between items-center">
                                     <div>
                                         <p className="text-sm">{days[6]}</p>
@@ -206,44 +214,12 @@ export const PfandautomatDetails = ({ data }: { data: any }) => {
                     Problem melden
                 </Button>
             </div>
+
+            {spot.verified === false &&
+                <>
+                    <VerifyRecycleMachines id={spot.id} verifySpot={()=>{setSpot((old:any)=>({...old, ...{verified:true}}))}}/>
+                </>
+            }
         </div>
     )
 }
-
-// const test = {
-//     "25Cent": {
-//         amount_money: 250,
-//         amount_bottles: 10
-//     },
-//     "15Cent": {
-//         amount_money: 60,
-//         amount_bottles: 4
-//     },
-//     "08Cent": {
-//         amount_money: 176,
-//         amount_bottles: 22
-//     },
-//     "crate": {
-//         amount_money: 350,
-//         amount_bottles: 1
-//     }
-// }
-
-// const test = {
-//     "25Cent": {
-//         usable: true,
-//         message: ""
-//     },
-//     "15Cent": {
-//         usable: false,
-//         message: ""
-//     },
-//     "08Cent": {
-//         usable: false,
-//         message: ""
-//     },
-//     "crate": {
-//         usable: false,
-//         message: ""
-//     }
-// }
