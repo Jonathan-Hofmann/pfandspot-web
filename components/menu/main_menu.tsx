@@ -21,52 +21,24 @@ import { useLocalStorage } from "usehooks-ts"
 import { useTheme } from "next-themes"
 import CircularProgressBar from "../utils/circularProgress"
 import Link from "next/link"
+import { useLevelSystem } from "@/contexts/levelSystem"
 
 
 export const Navigation = () => {
     const { setTheme, theme } = useTheme();
     const auth = useAuth()
+    const level = useLevelSystem()
     const [mode, setMode] = useLocalStorage("pfandspot_map_mode", "normal")
     return (
         <div className="fixed top-0 right-0 z-[500] p-4 rounded-xl">
             <Menubar className="rounded-lg p-0">
-                {/* <div className="flex flex-row items-center">
-                    <p className="text-sm ml-2 mr-3 text-muted-foreground hover:text-primary duration-200">PfandSpot</p>
-                    <MenubarMenu>
-                        <MenubarTrigger>Bearbeiten</MenubarTrigger>
-                        <MenubarContent>
-                            <MenubarItem>
-                                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-                            </MenubarItem>
-                            <MenubarItem>New Window</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem>Share</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem>Print</MenubarItem>
-                        </MenubarContent>
-                    </MenubarMenu>
-                    
-                    <MenubarMenu>
-                        <MenubarTrigger>View</MenubarTrigger>
-                        <MenubarContent>
-                            <MenubarItem>
-                                New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-                            </MenubarItem>
-                            <MenubarItem>New Window</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem>Share</MenubarItem>
-                            <MenubarSeparator />
-                            <MenubarItem>Print</MenubarItem>
-                        </MenubarContent>
-                    </MenubarMenu>
-                </div> */}
                 {auth.user ?
                     <MenubarMenu>
                         <MenubarTrigger className="p-1 pl-1.5 pr-3 h-10 hover:bg-zinc-100 hover:dark:bg-zinc-900 rounded-md">
                             <div className="flex flex-row items-center gap-3">
 
-                                <CircularProgressBar percentage={10} size={30} strokeWidth={4}>
-                                    <p className="text-xs">{auth.user.level}</p>
+                                <CircularProgressBar percentage={level.stats.percent} size={30} strokeWidth={4}>
+                                    <p className="text-xs">{level.stats.level}</p>
                                 </CircularProgressBar>
 
                                 <p className="text-md">{auth.user.name}</p>

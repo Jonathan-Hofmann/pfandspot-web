@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { useLevelSystem } from "@/contexts/levelSystem"
 import supabase from "@/lib/supabase"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
@@ -7,6 +8,7 @@ import { toast } from "sonner"
 export const VerifyRecycleMachines = ({id, verifySpot}:{id:string, verifySpot:Function}) => {
 
     const [isHidden, toggleIsHidden] = useState(false)
+    const level = useLevelSystem();
 
     const handleVerify = async () => {
         const {data, error} = await supabase.from("recycle_machines").update({verified: true}).eq("id", id).select();
@@ -33,6 +35,7 @@ export const VerifyRecycleMachines = ({id, verifySpot}:{id:string, verifySpot:Fu
     
             if(!error){
                 toast.success("Vielen Dank für Deine Hilfe!", {description: "+ 100 XP"});
+                level.addXP(100)
                 toggleIsHidden(true)
             } else {
                 toast.error("Es ist ein Fehler aufgetreten...", {description: error.message});
